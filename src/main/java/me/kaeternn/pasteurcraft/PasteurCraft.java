@@ -1,10 +1,11 @@
-package me.grole.pasteurcraft;
+package me.kaeternn.pasteurcraft;
 
 import java.util.List;
 import org.bukkit.entity.EntityType;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
-import me.grole.pasteurcraft.object.Disease;
+
+import me.kaeternn.pasteurcraft.object.Disease;
 
 public class PasteurCraft extends JavaPlugin{
     public static PasteurCraft PLUGIN;

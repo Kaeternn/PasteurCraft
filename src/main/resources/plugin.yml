@@ -1,6 +1,6 @@
 name: PasteurCraft
 version: "1.0"
-main: "me.grole.pasteurcraft.PasteurCraft"
+main: "me.kaeternn.pasteurcraft.PasteurCraft"
 api-version: "1.21"
 authors: [Grôle]
 depend: []

@@ -1,4 +1,4 @@
-package me.grole.pasteurcraft;
+package me.kaeternn.pasteurcraft;
 
 import java.io.File;
 import java.io.IOException;

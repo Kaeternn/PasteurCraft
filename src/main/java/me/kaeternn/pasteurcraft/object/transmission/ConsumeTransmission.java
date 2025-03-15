@@ -1,4 +1,4 @@
-package me.grole.pasteurcraft.object.transmission;
+package me.kaeternn.pasteurcraft.object.transmission;
 
 import java.util.List;
 import org.bukkit.Material;

@@ -1,11 +1,12 @@
-package me.grole.pasteurcraft.object;
+package me.kaeternn.pasteurcraft.object;
 
 import java.util.List;
 import org.bukkit.entity.EntityType;
-import me.grole.pasteurcraft.object.transmission.AirTransmission;
-import me.grole.pasteurcraft.object.transmission.BiomeTransmission;
-import me.grole.pasteurcraft.object.transmission.ConsumeTransmission;
-import me.grole.pasteurcraft.object.transmission.PhysicalTransmission;
+
+import me.kaeternn.pasteurcraft.object.transmission.AirTransmission;
+import me.kaeternn.pasteurcraft.object.transmission.BiomeTransmission;
+import me.kaeternn.pasteurcraft.object.transmission.ConsumeTransmission;
+import me.kaeternn.pasteurcraft.object.transmission.PhysicalTransmission;
 import net.minecraft.network.chat.OutgoingChatMessage.Player;
 
 public class Disease {

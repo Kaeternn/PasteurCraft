@@ -1,4 +1,4 @@
-group = "me.grole"
+group = "me.kaeternn"
 version = "1.0"
 description = "PasteurCraft"
 

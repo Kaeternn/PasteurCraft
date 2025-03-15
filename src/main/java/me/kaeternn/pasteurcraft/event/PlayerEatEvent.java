@@ -1,4 +1,4 @@
-package me.grole.pasteurcraft.event;
+package me.kaeternn.pasteurcraft.event;
 
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;

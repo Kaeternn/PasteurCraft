@@ -1,4 +1,4 @@
-package me.grole.pasteurcraft.object;
+package me.kaeternn.pasteurcraft.object;
 
 public class DiseaseEffect {
     private String name;
