@@ -1,0 +1,21 @@
+name: PasteurCraft
+version: "1.0"
+main: "me.grole.pasteurcraft.PasteurCraft"
+api-version: "1.21"
+authors: [Grôle]
+depend: []
+softdepend: []
+commands:
+    infect:
+        aliases: [inf]
+        usage: /infect <disease> <player>
+        description: Infect the given player with the given disease
+        permission: pasteurcraft.infect
+        permission-message: You do not have <permission>
+permissions:
+    pasteurcraft.*:
+        default: op
+        children:
+            - pasteurcraft.infect
+    pasteurcraft.infect:
+        default: op

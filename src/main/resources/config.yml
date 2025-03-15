@@ -1,0 +1,39 @@
+language: en
+
+diseases:
+  zvirus: # ID of your disease, should be unique
+    name: "Virus Z" # Name of the disease between quotes
+    transmission: # Transmission settings [Can be ignored]
+      physical_transmission: # Add only if your disease can be transmitted by interaction or attack
+        entities: # List of entities that can spawn with the disease
+          - ZOMBIE
+        chance: 25 # Chance of being infected by the disease
+      consume_transmission: # Add only if your disease can be transmitted by consuming an item
+        items: # List of item that can give the disease if consumed
+          - ROTTEN_FLESH
+        chance: 75 # Chance of being infected by the disease <0 to 100>
+      air_transmission: # Add only if your disease can be transmitted by being near something
+        entities: # List of entities that can spawn with the disease
+          - ZOMBIE
+        radius: 10 # Max radius a player can be infected if near one of the entities
+        chance: 5 # Chance of being infected by the disease
+      biome_transmission: # Add only if your disease can be transmitted by being in a biome
+        biomes: # List of biomes that can give the disease if the player is in
+          - DEEP_DARK
+        chance: # Chance of being infected by the disease
+    hosts: # List of entities that can be infected (No need to add entities in transmission settings)
+      - PLAYER
+    vector: # List of entites that can infect, based of the transmission settings (No need to add entities in transmission settings) [Can be ignored]
+      - PLAYER
+    immunity_chance: 25 # Chance of being immune to this disease <0 to 100>
+    incubation_duration : # In played minutes
+      min: 10
+      max: 15
+    infection_duration : # In played minutes
+      min: 30
+      max: 60
+    effects :
+      - WITHER 1 # Potion effects, see the https://jd.papermc.io/paper/1.21.4/org/bukkit/potion/PotionEffectType.html
+      - REMOVE_HEART 1 # Custom effects, see the plugin wiki
+
+    
