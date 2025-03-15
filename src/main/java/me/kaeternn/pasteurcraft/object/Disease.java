@@ -62,6 +62,7 @@ public class Disease {
 
     public String getName() { return name; }
 
+    public boolean haveTransmission(){ return this.air.equals(null) && this.biome.equals(null) && this.consume.equals(null) && this.physical.equals(null); }
     public AirTransmission getAir() { return air; }
     public BiomeTransmission getBiome() { return biome; }
     public ConsumeTransmission getConsume() { return consume; }
