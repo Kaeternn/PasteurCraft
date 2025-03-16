@@ -1,5 +1,7 @@
 language: en
 
+debug: true
+
 diseases:
   zvirus: # ID of your disease, should be unique
     name: "Virus Z" # Name of the disease between quotes
@@ -20,10 +22,10 @@ diseases:
       biome_transmission: # Add only if your disease can be transmitted by being in a biome
         biomes: # List of biomes that can give the disease if the player is in
           - DEEP_DARK
-        chance: # Chance of being infected by the disease
+        chance: 1 # Chance of being infected by the disease
     hosts: # List of entities that can be infected (No need to add entities in transmission settings)
       - PLAYER
-    vector: # List of entites that can infect, based of the transmission settings (No need to add entities in transmission settings) [Can be ignored]
+    vectors: # List of entites that can infect, based of the transmission settings (No need to add entities in transmission settings) [Can be ignored]
       - PLAYER
     immunity_chance: 25 # Chance of being immune to this disease <0 to 100>
     incubation_duration : # In played minutes
