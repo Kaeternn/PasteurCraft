@@ -8,6 +8,8 @@ import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import me.kaeternn.pasteurcraft.event.consume.PlayerEatEvent;
 import me.kaeternn.pasteurcraft.object.Disease;
 import me.kaeternn.pasteurcraft.object.DiseaseEffect;
 import me.kaeternn.pasteurcraft.object.transmission.AirTransmission;
@@ -29,7 +31,11 @@ public class PasteurCraft extends JavaPlugin{
             PLUGIN.diseases = loadDiseases(configuration, configuration.getBoolean("debug")); }
         catch(Exception e){
             getLogger().info("There was a major error while loading the diseases configuration : " + e); }
+
+        getServer().getPluginManager().registerEvents(new PlayerEatEvent(PLUGIN), PLUGIN);
     }
+
+    public List<Disease> getDiseases() { return diseases; }
 
     public List<Disease> loadDiseases(FileConfiguration configuration, boolean hasDebug){
         ConfigurationSection diseaseConfiguration = configuration.getConfigurationSection("diseases");

@@ -2,6 +2,7 @@ package me.kaeternn.pasteurcraft.object;
 
 import java.util.List;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 
 import me.kaeternn.pasteurcraft.object.transmission.AirTransmission;
 import me.kaeternn.pasteurcraft.object.transmission.BiomeTransmission;
@@ -75,4 +76,9 @@ public class Disease {
     public List<Integer> getIncubation() { return incubation; }
     public List<Integer> getDuration() { return duration; }
     public List<DiseaseEffect> getEffects() { return effects; }
+
+    // Methods
+    public void infect(Player player) {
+
+    }
 }

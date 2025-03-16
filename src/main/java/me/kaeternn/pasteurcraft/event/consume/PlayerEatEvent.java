@@ -1,0 +1,25 @@
+package me.kaeternn.pasteurcraft.event.consume;
+
+import java.util.Random;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
+import me.kaeternn.pasteurcraft.object.Disease;
+import me.kaeternn.pasteurcraft.object.transmission.ConsumeTransmission;
+import me.kaeternn.pasteurcraft.PasteurCraft;
+import org.bukkit.event.EventPriority;
+
+public class PlayerEatEvent implements Listener {
+    private final PasteurCraft PLUGIN;
+
+    public PlayerEatEvent(PasteurCraft PLUGIN) { this.PLUGIN = PLUGIN; }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    private void onPlayerEatEvent(PlayerItemConsumeEvent event){
+        for(Disease disease : PLUGIN.getDiseases()){
+            ConsumeTransmission consume = disease.getConsume();
+            if(consume != null && consume.getChance() >= new Random().nextInt(100)+1 && consume.getItems().contains(event.getItem().getType())){
+                disease.infect(event.getPlayer()); }
+        }
+    }
+}
