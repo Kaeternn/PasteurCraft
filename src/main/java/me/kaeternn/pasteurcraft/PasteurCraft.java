@@ -2,7 +2,6 @@ package me.kaeternn.pasteurcraft;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.bukkit.entity.EntityType;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;

@@ -7,9 +7,9 @@ import me.kaeternn.pasteurcraft.object.transmission.AirTransmission;
 import me.kaeternn.pasteurcraft.object.transmission.BiomeTransmission;
 import me.kaeternn.pasteurcraft.object.transmission.ConsumeTransmission;
 import me.kaeternn.pasteurcraft.object.transmission.PhysicalTransmission;
-import net.minecraft.network.chat.OutgoingChatMessage.Player;
 
 public class Disease {
+    // Variables
     private String name;
 
     private AirTransmission air;
@@ -24,6 +24,7 @@ public class Disease {
     private List<Integer> duration;
     private List<DiseaseEffect> effects;
 
+    // Constructor
     public Disease(String name, List<EntityType> hosts, List<EntityType> vectors, int immunityChance, List<Integer> incubation, List<Integer> duration, List<DiseaseEffect> effects){
         this.name = name;
         
@@ -37,7 +38,6 @@ public class Disease {
         this.duration = duration;
         this.effects = effects;
     }
-
     public void setAir(AirTransmission air){
         for(EntityType entity : air.getEntities())
             if(!this.vectors.contains(entity))
@@ -60,6 +60,7 @@ public class Disease {
                 this.hosts.add(entity);
     }
 
+    // Assessors
     public String getName() { return name; }
 
     public boolean haveTransmission(){ return this.air.equals(null) && this.biome.equals(null) && this.consume.equals(null) && this.physical.equals(null); }
@@ -74,8 +75,4 @@ public class Disease {
     public List<Integer> getIncubation() { return incubation; }
     public List<Integer> getDuration() { return duration; }
     public List<DiseaseEffect> getEffects() { return effects; }
-
-    public boolean infect(Player player){
-        return true;
-    }
 }
