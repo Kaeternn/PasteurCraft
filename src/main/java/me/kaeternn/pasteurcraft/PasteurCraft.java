@@ -1,7 +1,10 @@
 package me.kaeternn.pasteurcraft;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import org.bukkit.entity.EntityType;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
@@ -54,7 +57,7 @@ public class PasteurCraft extends JavaPlugin{
                 getLogger().info("The disease number " + i+1 + " isn't named in the configuration, the disease was ignored by the plugin.");
                 continue; }
 
-            List<EntityType> hosts = new ArrayList<>();
+            Set<EntityType> hosts = new HashSet<>();
             for(Object host : disease.getList("hosts")){ // Loop on all entities designed as hosts
                 try{ // Try to match the entity with a Minecraft one
                     hosts.add(EntityType.valueOf(host.toString().toUpperCase())); }
@@ -62,7 +65,7 @@ public class PasteurCraft extends JavaPlugin{
                     getLogger().info(host.toString() + " in " + disease.getString("name") + "'s host list isn't a valid entity so it was ignored by the plugin."); }
             }
             
-            List<EntityType> vectors = new ArrayList<>();
+            Set<EntityType> vectors = new HashSet<>();
             for(Object vector : disease.getList("vectors")){ // Loop on all entities designed as vectors
                 try{ // Try to match the entity with a Minecraft one
                     vectors.add(EntityType.valueOf(vector.toString().toUpperCase())); }
@@ -110,7 +113,7 @@ public class PasteurCraft extends JavaPlugin{
             if(transmissionSection.getConfigurationSection("air_transmission") != null){ // Getting the air transmission parameters
                 ConfigurationSection airSection = transmissionSection.getConfigurationSection("air_transmission");
 
-                List<EntityType> entities = new ArrayList<>();
+                Set<EntityType> entities = new HashSet<>();
                 for(Object entity : airSection.getList("entities")){ // Loop on all the transmission's entities
                     try{ // Try to match the entity with a Minecraft one
                         entities.add(EntityType.valueOf(entity.toString().toUpperCase())); }
@@ -123,7 +126,7 @@ public class PasteurCraft extends JavaPlugin{
             if(transmissionSection.getConfigurationSection("biome_transmission") != null){ // Getting the biome transmission parameters
                 ConfigurationSection biomeSection = transmissionSection.getConfigurationSection("biome_transmission");
 
-                List<Biome> biomes = new ArrayList<>();
+                Set<Biome> biomes = new HashSet<>();
                 for(Object biome : biomeSection.getList("biomes")){ // Loop on all the transmission's biomes
                     try{ // Try to match the biome with a Minecraft one
                         biomes.add(Biome.valueOf(biome.toString().toUpperCase())); }
@@ -137,7 +140,7 @@ public class PasteurCraft extends JavaPlugin{
             if(transmissionSection.getConfigurationSection("consume_transmission") != null){ // Getting the consume transmission parameters
                 ConfigurationSection consumeSection = transmissionSection.getConfigurationSection("consume_transmission");
 
-                List<Material> items = new ArrayList<>();
+                Set<Material> items = new HashSet<>();
                 for(Object item : consumeSection.getList("items")){ // Loop on all the transmission's items
                     try{ // Try to match the item with a Minecraft one
                         items.add(Material.valueOf(item.toString().toUpperCase())); }
@@ -151,7 +154,7 @@ public class PasteurCraft extends JavaPlugin{
             if(transmissionSection.getConfigurationSection("physical_transmission") != null){ // Getting the physical transmission parameters
                 ConfigurationSection physicalSection = transmissionSection.getConfigurationSection("physical_transmission");
 
-                List<EntityType> entities = new ArrayList<>();
+                Set<EntityType> entities = new HashSet<>();
                 for(Object entity : physicalSection.getList("entities")){ // Loop on all the transmission's entities
                     try{ // Try to match the entity with a Minecraft one
                         entities.add(EntityType.valueOf(entity.toString().toUpperCase())); }

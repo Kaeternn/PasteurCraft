@@ -1,8 +1,7 @@
 package me.kaeternn.pasteurcraft.object.transmission;
 
-import java.util.List;
+import java.util.Set;
 import org.bukkit.entity.EntityType;
-
 import me.kaeternn.pasteurcraft.abstraction.AbstractTransmission;
 
 public class AirTransmission extends AbstractTransmission<EntityType> {
@@ -10,7 +9,7 @@ public class AirTransmission extends AbstractTransmission<EntityType> {
     int radius;
 
     // Constructor
-    public AirTransmission(List<EntityType> entities, int radius, int chance){
+    public AirTransmission(Set<EntityType> entities, int radius, int chance){
         super(entities, chance);
         this.radius = radius;
     }

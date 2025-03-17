@@ -1,19 +1,19 @@
 package me.kaeternn.pasteurcraft.abstraction;
 
-import java.util.List;
+import java.util.Set;
 
 abstract public class AbstractTransmission<T> {
     // Variables
-    private List<T> list;
+    private Set<T> list;
     private int chance;
 
     // Constructor
-    public AbstractTransmission(List<T> list, int chance){
+    public AbstractTransmission(Set<T> list, int chance){
         this.list = list;
         this.chance = chance;
     }
 
     // Assessors
-    public List<T> getList() { return list; }
+    public Set<T> getList() { return list; }
     public int getChance() { return chance; }
 }
