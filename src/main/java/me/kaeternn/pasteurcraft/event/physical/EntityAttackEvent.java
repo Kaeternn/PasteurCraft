@@ -7,7 +7,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+
 import me.kaeternn.pasteurcraft.PasteurCraft;
+import me.kaeternn.pasteurcraft.abstraction.AbstractTransmission;
 import me.kaeternn.pasteurcraft.object.Disease;
 import me.kaeternn.pasteurcraft.object.transmission.PhysicalTransmission;
 
@@ -22,10 +24,14 @@ public class EntityAttackEvent implements Listener {
             Player player = (Player) event.getEntity();
             
             for(Disease disease : PLUGIN.getDiseases()){
-                PhysicalTransmission physical = disease.getPhysical();
-
-                if(physical != null && physical.getChance() >= new Random().nextInt(100)+1 && physical.getEntities().contains(event.getDamager().getType())){
-                    disease.infect(player);}
+                for(AbstractTransmission transmission : disease.getTransmissions()){
+                    if(transmission instanceof PhysicalTransmission){
+                        PhysicalTransmission physical = (PhysicalTransmission) transmission;
+                        if(physical.getChance() > new Random().nextInt(100) && physical.getList().contains(event.getDamager().getType())){
+                            disease.infect(player);
+                        }
+                    }
+                }
             }
         }
     }

@@ -1,9 +1,11 @@
 package me.kaeternn.pasteurcraft.object;
 
 import java.util.List;
+import java.util.Set;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
+import me.kaeternn.pasteurcraft.abstraction.AbstractTransmission;
 import me.kaeternn.pasteurcraft.object.transmission.AirTransmission;
 import me.kaeternn.pasteurcraft.object.transmission.BiomeTransmission;
 import me.kaeternn.pasteurcraft.object.transmission.ConsumeTransmission;
@@ -13,12 +15,9 @@ public class Disease {
     // Variables
     private String name;
 
-    private AirTransmission air;
-    private BiomeTransmission biome;
-    private ConsumeTransmission consume;
-    private PhysicalTransmission physical;
-    private List<EntityType> hosts;
-    private List<EntityType> vectors;
+    private List<AbstractTransmission> transmissions;
+    private Set<EntityType> hosts;
+    private Set<EntityType> vectors;
     private int immunityChance;
 
     private List<Integer> incubation;
@@ -26,12 +25,12 @@ public class Disease {
     private List<DiseaseEffect> effects;
 
     // Constructor
-    public Disease(String name, List<EntityType> hosts, List<EntityType> vectors, int immunityChance, List<Integer> incubation, List<Integer> duration, List<DiseaseEffect> effects){
+    public Disease(String name, Set<EntityType> hosts, Set<EntityType> vectors, int immunityChance, List<Integer> incubation, List<Integer> duration, List<DiseaseEffect> effects){
         this.name = name;
         
         this.hosts = hosts;
         this.vectors = vectors;
-        majHosts();
+        this.hosts.addAll(vectors);
 
         this.immunityChance = immunityChance;
         
@@ -40,37 +39,25 @@ public class Disease {
         this.effects = effects;
     }
     public void setAir(AirTransmission air){
-        for(EntityType entity : air.getEntities())
-            if(!this.vectors.contains(entity))
-                this.vectors.add(entity);
-        majHosts();
-        this.air = air;
+        this.vectors.addAll(air.getList());
+        this.hosts.addAll(this.vectors);
+        this.transmissions.add(air);
     }
-    public void setBiome(BiomeTransmission biome){ this.biome = biome; }
-    public void setConsume(ConsumeTransmission consume){ this.consume = consume; }
+    public void setBiome(BiomeTransmission biome){ this.transmissions.add(biome); }
+    public void setConsume(ConsumeTransmission consume){ this.transmissions.add(consume); }
     public void setPhysical(PhysicalTransmission physical){
-        for(EntityType entity : physical.getEntities())
-            if(!this.vectors.contains(entity))
-                this.vectors.add(entity);
-        majHosts();
-        this.physical = physical;
-    }
-    private void majHosts(){
-        for(EntityType entity : this.vectors)
-            if(!this.hosts.contains(entity))
-                this.hosts.add(entity);
+        this.vectors.addAll(physical.getList());
+        this.hosts.addAll(this.vectors);
+        this.transmissions.add(physical);
     }
 
     // Assessors
     public String getName() { return name; }
 
-    public boolean haveTransmission(){ return this.air.equals(null) && this.biome.equals(null) && this.consume.equals(null) && this.physical.equals(null); }
-    public AirTransmission getAir() { return air; }
-    public BiomeTransmission getBiome() { return biome; }
-    public ConsumeTransmission getConsume() { return consume; }
-    public PhysicalTransmission getPhysical() { return physical; }
-    public List<EntityType> getHosts() { return hosts; }
-    public List<EntityType> getVectors() { return vectors; }
+    public boolean haveTransmission(){ return this.transmissions.size() == 0; }
+    public List<AbstractTransmission> getTransmissions() { return transmissions; }
+    public Set<EntityType> getHosts() { return hosts; }
+    public Set<EntityType> getVectors() { return vectors; }
     public int getImmunityChance() { return immunityChance; }
 
     public List<Integer> getIncubation() { return incubation; }
