@@ -6,3 +6,5 @@ Make your Minecraft server more dangerous with diseases that can be contracted t
 If you need help with plugin configuration, would like to propose new features, or just chat about the plugin, don't hesitate to join my [Discord]()!
 ## Documentation
 You can find instructions on how to use the plugin in [the Wiki]().
+## Credits
+Thanks to Rocmop for the logo !
