@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.bukkit.entity.EntityType;
 import org.bukkit.Material;
@@ -11,7 +12,6 @@ import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import me.kaeternn.pasteurcraft.event.consume.PlayerEatEvent;
 import me.kaeternn.pasteurcraft.object.Disease;
 import me.kaeternn.pasteurcraft.object.DiseaseEffect;
@@ -31,7 +31,7 @@ public class PasteurCraft extends JavaPlugin{
         FileConfiguration configuration = PasteurCraft.PLUGIN.getConfig();
 
         try{ // Try to get the diseases from configuration
-            PLUGIN.diseases = loadDiseases(configuration, configuration.getBoolean("debug")); }
+            PLUGIN.diseases = loadDiseases(configuration);}
         catch(Exception e){
             getLogger().info("There was a major error while loading the diseases configuration : " + e); }
 
@@ -40,7 +40,7 @@ public class PasteurCraft extends JavaPlugin{
 
     public List<Disease> getDiseases() { return diseases; }
 
-    public List<Disease> loadDiseases(FileConfiguration configuration, boolean hasDebug){
+    private List<Disease> loadDiseases(FileConfiguration configuration){
         ConfigurationSection diseaseConfiguration = configuration.getConfigurationSection("diseases");
         int i = 0;
         
@@ -110,58 +110,20 @@ public class PasteurCraft extends JavaPlugin{
             Disease diseaseToAdd = new Disease(disease.getString("name"), hosts, vectors, immunityChance, incubation, infection, effects);
             ConfigurationSection transmissionSection = disease.getConfigurationSection("transmission");
 
-            if(transmissionSection.getConfigurationSection("air_transmission") != null){ // Getting the air transmission parameters
-                ConfigurationSection airSection = transmissionSection.getConfigurationSection("air_transmission");
-
-                Set<EntityType> entities = new HashSet<>();
-                for(Object entity : airSection.getList("entities")){ // Loop on all the transmission's entities
-                    try{ // Try to match the entity with a Minecraft one
-                        entities.add(EntityType.valueOf(entity.toString().toUpperCase())); }
-                    catch(Exception e){
-                        getLogger().info(entity.toString() + " in " + disease.getString("name") + "'s air_transmission entity list isn't a valid entity so it was ignored by the plugin."); } }
-
-                AirTransmission air = new AirTransmission(entities, airSection.getInt("radius"), airSection.getInt("chance"));
+            if(transmissionSection.getConfigurationSection("air_transmission") != null){ // Verify if the disease have an air transmission
+                AirTransmission air = (AirTransmission) instTransmission(transmissionSection.getConfigurationSection("air_transmission"), "air_transmission", disease.getString("name"));
                 diseaseToAdd.setAir(air); }
 
-            if(transmissionSection.getConfigurationSection("biome_transmission") != null){ // Getting the biome transmission parameters
-                ConfigurationSection biomeSection = transmissionSection.getConfigurationSection("biome_transmission");
-
-                Set<Biome> biomes = new HashSet<>();
-                for(Object biome : biomeSection.getList("biomes")){ // Loop on all the transmission's biomes
-                    try{ // Try to match the biome with a Minecraft one
-                        biomes.add(Biome.valueOf(biome.toString().toUpperCase())); }
-                    catch(Exception e){
-                        getLogger().info(biome.toString() + " in " + disease.getString("name") + "'s biome_transmission biome list isn't a valid biome so it was ignored by the plugin."); } }
-
-                BiomeTransmission biome = new BiomeTransmission(biomes, biomeSection.getInt("chance"));
+            if(transmissionSection.getConfigurationSection("biome_transmission") != null){ // Verify if the disease have an biome transmission
+                BiomeTransmission biome = (BiomeTransmission) instTransmission(transmissionSection.getConfigurationSection("biome_transmission"), "biome_transmission", disease.getString("name"));
                 diseaseToAdd.setBiome(biome); }
 
-
-            if(transmissionSection.getConfigurationSection("consume_transmission") != null){ // Getting the consume transmission parameters
-                ConfigurationSection consumeSection = transmissionSection.getConfigurationSection("consume_transmission");
-
-                Set<Material> items = new HashSet<>();
-                for(Object item : consumeSection.getList("items")){ // Loop on all the transmission's items
-                    try{ // Try to match the item with a Minecraft one
-                        items.add(Material.valueOf(item.toString().toUpperCase())); }
-                    catch(Exception e){
-                        getLogger().info(item.toString() + " in " + disease.getString("name") + "'s consume_transmission item list isn't a valid item so it was ignored by the plugin."); } }
-                
-                ConsumeTransmission consume = new ConsumeTransmission(items, consumeSection.getInt("chance"));
+            if(transmissionSection.getConfigurationSection("consume_transmission") != null){ // Verify if the disease have an consume transmission
+                ConsumeTransmission consume = (ConsumeTransmission) instTransmission(transmissionSection.getConfigurationSection("consume_transmission"), "consume_transmission", disease.getString("name"));
                 diseaseToAdd.setConsume(consume); }
 
-
-            if(transmissionSection.getConfigurationSection("physical_transmission") != null){ // Getting the physical transmission parameters
-                ConfigurationSection physicalSection = transmissionSection.getConfigurationSection("physical_transmission");
-
-                Set<EntityType> entities = new HashSet<>();
-                for(Object entity : physicalSection.getList("entities")){ // Loop on all the transmission's entities
-                    try{ // Try to match the entity with a Minecraft one
-                        entities.add(EntityType.valueOf(entity.toString().toUpperCase())); }
-                    catch(Exception e){
-                        getLogger().info(entity.toString() + " in " + disease.getString("name") + "'s physical_transmission entity list isn't a valid entity so it was ignored by the plugin."); } }
-                
-                PhysicalTransmission physical = new PhysicalTransmission(entities, physicalSection.getInt("chance"));
+            if(transmissionSection.getConfigurationSection("physical_transmission") != null){ // Verify if the disease have an physical transmission
+                PhysicalTransmission physical = (PhysicalTransmission) instTransmission(transmissionSection.getConfigurationSection("physical_transmission"), "physical_transmission", disease.getString("name"));
                 diseaseToAdd.setPhysical(physical); }
 
             diseases.add(diseaseToAdd);
@@ -169,5 +131,42 @@ public class PasteurCraft extends JavaPlugin{
         }
 
         return diseases;
+    }
+
+    private Object instTransmission (ConfigurationSection section, String type, String disease) {
+        Set<Object> objects = new HashSet<>();
+
+        for(Object object : section.getList(type.equals("air_transmission")||type.equals("physical_transmission") ? "entities" : type.equals("biome_transmission") ? "biomes" : "items")){
+            switch(type){
+                case "biome_transmission":
+                    try{
+                        objects.add(Biome.valueOf(object.toString().toUpperCase()));}
+                    catch(Exception e){
+                        getLogger().info(object.toString() + " in " + disease + "'s " + type + " biome list isn't a valid biome so it was ignored by the plugin."); }
+                case "consume_transmission":
+                    try{
+                        objects.add(Material.valueOf(object.toString().toUpperCase()));}
+                    catch(Exception e){
+                        getLogger().info(object.toString() + " in " + disease + "'s " + type + " item list isn't a valid biome so it was ignored by the plugin."); }
+                default:
+                    try{
+                        objects.add(EntityType.valueOf(object.toString().toUpperCase()));}
+                    catch(Exception e){
+                        getLogger().info(object.toString() + " in " + disease + "'s " + type + " entity list isn't a valid biome so it was ignored by the plugin."); }
+            }
+        }
+
+        switch(type){
+            case "air_transmission":
+                return new AirTransmission(objects.stream().map(EntityType.class::cast).collect(Collectors.toSet()), section.getInt("radius"), section.getInt("chance"));
+            case "biome_transmission":
+                return new BiomeTransmission(objects.stream().map(Biome.class::cast).collect(Collectors.toSet()), section.getInt("chance"));
+            case "consume_transmission":
+                return new ConsumeTransmission(objects.stream().map(Material.class::cast).collect(Collectors.toSet()), section.getInt("chance"));
+            case "physical_transmission":
+                return new PhysicalTransmission(objects.stream().map(EntityType.class::cast).collect(Collectors.toSet()), section.getInt("chance"));
+        }
+
+        return null;
     }
 }
