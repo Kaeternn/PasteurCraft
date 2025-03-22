@@ -147,12 +147,12 @@ public class PasteurCraft extends JavaPlugin{
                     try{
                         objects.add(Material.valueOf(object.toString().toUpperCase()));}
                     catch(Exception e){
-                        getLogger().info(object.toString() + " in " + disease + "'s " + type + " item list isn't a valid biome so it was ignored by the plugin."); }
+                        getLogger().info(object.toString() + " in " + disease + "'s " + type + " item list isn't a valid item so it was ignored by the plugin."); }
                 default:
                     try{
                         objects.add(EntityType.valueOf(object.toString().toUpperCase()));}
                     catch(Exception e){
-                        getLogger().info(object.toString() + " in " + disease + "'s " + type + " entity list isn't a valid biome so it was ignored by the plugin."); }
+                        getLogger().info(object.toString() + " in " + disease + "'s " + type + " entity list isn't a valid entity so it was ignored by the plugin."); }
             }
         }
 
