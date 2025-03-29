@@ -1,8 +1,7 @@
-package me.kaeternn.pasteurcraft.object.transmission;
+package me.kaeternn.pasteurcraft.entities.transmission;
 
 import java.util.Set;
 import org.bukkit.block.Biome;
-import me.kaeternn.pasteurcraft.abstraction.AbstractTransmission;
 
 public class BiomeTransmission extends AbstractTransmission<Biome> {
     public BiomeTransmission(Set<Biome> biomes, int chance){ super(biomes, chance); }

@@ -1,4 +1,4 @@
-package me.kaeternn.pasteurcraft.event.physical;
+package me.kaeternn.pasteurcraft.listeners.physical;
 
 import java.util.Random;
 import org.bukkit.entity.EntityType;
@@ -9,9 +9,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import me.kaeternn.pasteurcraft.PasteurCraft;
-import me.kaeternn.pasteurcraft.abstraction.AbstractTransmission;
-import me.kaeternn.pasteurcraft.object.Disease;
-import me.kaeternn.pasteurcraft.object.transmission.PhysicalTransmission;
+import me.kaeternn.pasteurcraft.entities.Disease;
+import me.kaeternn.pasteurcraft.entities.transmission.AbstractTransmission;
+import me.kaeternn.pasteurcraft.entities.transmission.PhysicalTransmission;
 
 public class EntityAttackEvent implements Listener {
     private final PasteurCraft PLUGIN;

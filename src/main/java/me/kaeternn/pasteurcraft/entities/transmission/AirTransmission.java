@@ -1,8 +1,7 @@
-package me.kaeternn.pasteurcraft.object.transmission;
+package me.kaeternn.pasteurcraft.entities.transmission;
 
 import java.util.Set;
 import org.bukkit.entity.EntityType;
-import me.kaeternn.pasteurcraft.abstraction.AbstractTransmission;
 
 public class AirTransmission extends AbstractTransmission<EntityType> {
     // Variables

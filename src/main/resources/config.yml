@@ -1,7 +1,5 @@
 language: en
-
 debug: true
-
 diseases:
   zvirus: # ID of your disease, should be unique
     name: "Virus Z" # Name of the disease between quotes
@@ -36,6 +34,5 @@ diseases:
       max: 60
     effects :
       - WITHER 1 # Potion effects, see the https://jd.papermc.io/paper/1.21.4/org/bukkit/potion/PotionEffectType.html
-      - REMOVE_HEART 1 # Custom effects, see the plugin wiki
 
     

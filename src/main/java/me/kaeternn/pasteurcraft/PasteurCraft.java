@@ -1,27 +1,35 @@
 package me.kaeternn.pasteurcraft;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import org.bukkit.entity.EntityType;
+import org.bukkit.event.Listener;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import me.kaeternn.pasteurcraft.event.consume.PlayerEatEvent;
-import me.kaeternn.pasteurcraft.object.Disease;
-import me.kaeternn.pasteurcraft.object.DiseaseEffect;
-import me.kaeternn.pasteurcraft.object.transmission.AirTransmission;
-import me.kaeternn.pasteurcraft.object.transmission.BiomeTransmission;
-import me.kaeternn.pasteurcraft.object.transmission.ConsumeTransmission;
-import me.kaeternn.pasteurcraft.object.transmission.PhysicalTransmission;
+
+import me.kaeternn.pasteurcraft.commands.InfectCmd;
+import me.kaeternn.pasteurcraft.entities.Disease;
+import me.kaeternn.pasteurcraft.entities.DiseaseEffect;
+import me.kaeternn.pasteurcraft.entities.transmission.AirTransmission;
+import me.kaeternn.pasteurcraft.entities.transmission.BiomeTransmission;
+import me.kaeternn.pasteurcraft.entities.transmission.ConsumeTransmission;
+import me.kaeternn.pasteurcraft.entities.transmission.PhysicalTransmission;
+import me.kaeternn.pasteurcraft.listeners.consume.PlayerEatEvent;
+import me.kaeternn.pasteurcraft.listeners.physical.EntityAttackEvent;
 
 public class PasteurCraft extends JavaPlugin{
     public static PasteurCraft PLUGIN;
-    private List<Disease> diseases = new ArrayList<>();
+    public static List<Disease> diseases = new ArrayList<>();
+    public static boolean debug;
+    public static String lang;
 
     @Override
     public void onEnable(){
@@ -29,10 +37,33 @@ public class PasteurCraft extends JavaPlugin{
         PasteurCraft.PLUGIN = this;
         FileConfiguration configuration = PasteurCraft.PLUGIN.getConfig();
 
+        try{ // Try to get debug state from configuration
+            debug = configuration.getBoolean("debug");
+        }catch(Exception e){
+            getLogger().info("Failed to get debug state from the configuration, it was set to false by default."); 
+            configuration.addDefault("debug", false);
+            debug = false; 
+        }
+
+        try{ // Try to get language from configuration
+            lang = configuration.getString("language");
+        }catch(Exception e){
+            getLogger().info("Failed to get language from the configuration, it was set to en by default.");
+            configuration.addDefault("language", "en");
+            lang = "en"; 
+        }
+
         try{ // Try to get the diseases from configuration
-            PLUGIN.diseases = loadDiseases(configuration);}
-        catch(Exception e){
-            getLogger().info("There was a major error while loading the diseases configuration : " + e); }
+            PLUGIN.diseases = loadDiseases(configuration);
+        }catch(Exception e){
+            getLogger().info("There was a major error while loading the diseases configuration : " + e); 
+        }
+        
+        List<Listener> listeners = Arrays.asList(
+            new PlayerEatEvent(PLUGIN),
+            new EntityAttackEvent(PLUGIN));
+
+        getCommand("infect").setExecutor(new InfectCmd());
 
         getServer().getPluginManager().registerEvents(new PlayerEatEvent(PLUGIN), PLUGIN);
     }
@@ -45,7 +76,6 @@ public class PasteurCraft extends JavaPlugin{
         
         if(diseaseConfiguration.getKeys(false).isEmpty()){ // Verify if there is configured diseases
             getLogger().info("There is no disease in the configuration file, please note that the plugin won't do anything without one."); }
-        else{ return null; }
 
         getLogger().info("Loading " + diseaseConfiguration.getKeys(false).size() + " diseases ...");
 
@@ -135,21 +165,30 @@ public class PasteurCraft extends JavaPlugin{
 
         for(Object object : section.getList(type.equals("air_transmission")||type.equals("physical_transmission") ? "entities" : type.equals("biome_transmission") ? "biomes" : "items")){
             switch(type){
+                case "air_transmission":
+                    try{
+                        objects.add(EntityType.valueOf(object.toString().toUpperCase()));
+                    }catch(Exception e){
+                        getLogger().info(object.toString() + " in " + disease + "'s air_transmission entity list isn't a valid entity so it was ignored by the plugin.");
+                    }
                 case "biome_transmission":
                     try{
-                        objects.add(Biome.valueOf(object.toString().toUpperCase()));}
-                    catch(Exception e){
-                        getLogger().info(object.toString() + " in " + disease + "'s " + type + " biome list isn't a valid biome so it was ignored by the plugin."); }
+                        objects.add(Biome.valueOf(object.toString().toUpperCase()));
+                    }catch(Exception e){
+                        getLogger().info(object.toString() + " in " + disease + "'s biome_transmission biome list isn't a valid biome so it was ignored by the plugin.");
+                    }
                 case "consume_transmission":
                     try{
-                        objects.add(Material.valueOf(object.toString().toUpperCase()));}
-                    catch(Exception e){
-                        getLogger().info(object.toString() + " in " + disease + "'s " + type + " item list isn't a valid item so it was ignored by the plugin."); }
-                default:
+                        objects.add(Material.valueOf(object.toString().toUpperCase()));
+                    }catch(Exception e){
+                        getLogger().info(object.toString() + " in " + disease + "'s consume_transmission item list isn't a valid item so it was ignored by the plugin.");
+                    }
+                case "physical_transmission":
                     try{
-                        objects.add(EntityType.valueOf(object.toString().toUpperCase()));}
-                    catch(Exception e){
-                        getLogger().info(object.toString() + " in " + disease + "'s " + type + " entity list isn't a valid entity so it was ignored by the plugin."); }
+                        objects.add(EntityType.valueOf(object.toString().toUpperCase()));
+                    }catch(Exception e){
+                        getLogger().info(object.toString() + " in " + disease + "'s physical_transmission entity list isn't a valid entity so it was ignored by the plugin.");
+                    }
             }
         }
 

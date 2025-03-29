@@ -1,4 +1,4 @@
-package me.kaeternn.pasteurcraft.abstraction;
+package me.kaeternn.pasteurcraft.entities.transmission;
 
 import java.util.Set;
 
