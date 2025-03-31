@@ -12,10 +12,28 @@ commands:
         description: Infect the given player with the given disease
         permission: pasteurcraft.infect
         permission-message: You do not have <permission>
+    cure:
+        aliases: [cr]
+        usage: /cure <disease> <player>
+        description: Cure the given player with the given disease
+        permission: pasteurcraft.cure
+        permission-message: You do not have <permission>
+    diseaselist:
+        aliases: [dl]
+        usage: /diseaselist 
+        description: Give all existing diseases
+        permission: pasteurcraft.diseaselist
+        permission-message: You do not have <permission>
 permissions:
     pasteurcraft.*:
         default: op
         children:
             - pasteurcraft.infect
+            - pasteurcraft.cure
+            - pasteurcraft.diseaselist
     pasteurcraft.infect:
+        default: op
+    pasteurcraft.cure:
+        default: op
+    pasteurcraft.diseaselist:
         default: op

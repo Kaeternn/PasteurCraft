@@ -6,5 +6,18 @@ Make your Minecraft server more dangerous with diseases that can be contracted t
 If you need help with plugin configuration, would like to propose new features, or just chat about the plugin, don't hesitate to join my [Discord]()!
 ## Documentation
 You can find instructions on how to use the plugin in [the Wiki]().
+## Planned features
+* Cure
+* Some optimisation
+* Mobs getting sick
+* Custom effects
+    * Random teleportation (like chorus)
+    * Player vision change (if I can)
+    * Some real life symptoms
+* Towny & Lands soft support, based on the number of active infected player in a town/land, the disease would have a chance infect player that roam in the city 
+* Brewery & Breweryx soft support
+* Discover & research mechanic
+* Injuries
+* Food affect health
 ## Credits
 Thanks to Rocmop for the logo !

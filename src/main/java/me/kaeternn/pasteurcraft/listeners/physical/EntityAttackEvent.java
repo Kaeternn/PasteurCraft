@@ -1,6 +1,8 @@
 package me.kaeternn.pasteurcraft.listeners.physical;
 
 import java.util.Random;
+
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,17 +20,29 @@ public class EntityAttackEvent implements Listener {
 
     public EntityAttackEvent(PasteurCraft PLUGIN) { this.PLUGIN = PLUGIN; }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.NORMAL)
     private void onEntityAttackEvent(EntityDamageByEntityEvent event){
         if(event.getEntity().getType().equals(EntityType.PLAYER)){
-            Player player = (Player) event.getEntity();
+            Entity damaged = event.getEntity();
+            Entity damager = event.getDamager();
             
             for(Disease disease : PLUGIN.getDiseases()){
                 for(AbstractTransmission transmission : disease.getTransmissions()){
                     if(transmission instanceof PhysicalTransmission){
                         PhysicalTransmission physical = (PhysicalTransmission) transmission;
-                        if(physical.getChance() > new Random().nextInt(100) && physical.getList().contains(event.getDamager().getType())){
-                            disease.infect(player);
+                        boolean isDamagedInfectedVector = disease.isInfected((Player) damaged) && disease.getVectors().contains(damaged.getType());
+                        boolean isDamagerInfectedVector = disease.isInfected((Player) damager) && disease.getVectors().contains(damager.getType());
+
+                        if(physical.getChance() > new Random().nextInt(100)){
+                            if((isDamagedInfectedVector || physical.getList().contains(damaged.getType()))
+                                && damager.getType().equals(EntityType.PLAYER)){
+                                disease.infect((Player) damager);
+                            }
+
+                            if(isDamagerInfectedVector || physical.getList().contains(damager.getType())
+                                && damager.getType().equals(EntityType.PLAYER)){
+                                disease.infect((Player) damaged);
+                            }
                         }
                     }
                 }

@@ -12,7 +12,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class UsersData {
-    private static File dataFolder = new File(PasteurCraft.PLUGIN.getDataFolder(), "users/");
+    private static File dataFolder = new File(PasteurCraft.plugin.getDataFolder(), "users/");
     private static HashMap<UUID, YamlConfiguration> usersData;
 
     public static void init() {
@@ -28,9 +28,6 @@ public class UsersData {
      * @return
      */
     public static Optional<YamlConfiguration> get(OfflinePlayer user) {
-        if (usersData.containsKey(user.getUniqueId()))
-            return Optional.of(usersData.get(user.getUniqueId()));
-
         List<String> usersUUIDs = List.of(dataFolder.listFiles((dir, name) -> name.toLowerCase().endsWith(".yml")))
                 .stream().map(file -> file.getName().split("\\.")[0]).collect(Collectors.toList());
 
@@ -39,7 +36,6 @@ public class UsersData {
 
         File userFile = new File(dataFolder, user.getUniqueId() + ".yml");
         YamlConfiguration data = YamlConfiguration.loadConfiguration(userFile);
-        usersData.put(user.getUniqueId(), data);
 
         return Optional.of(data);
     }

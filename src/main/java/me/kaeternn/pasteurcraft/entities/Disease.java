@@ -1,5 +1,6 @@
 package me.kaeternn.pasteurcraft.entities;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -8,6 +9,7 @@ import java.util.Set;
 import org.bukkit.Statistic;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
@@ -25,6 +27,7 @@ public class Disease {
     private List<AbstractTransmission> transmissions;
     private Set<EntityType> hosts;
     private Set<EntityType> vectors;
+
     private int immunityChance;
 
     private List<Integer> incubation;
@@ -59,14 +62,13 @@ public class Disease {
         this.hosts.addAll(this.vectors);
         this.transmissions.add(physical);
     }
-
     // Assessors
     public String getName() { return name; }
 
-    public boolean haveTransmission(){ return this.transmissions.size() == 0; }
     public List<AbstractTransmission> getTransmissions() { return transmissions; }
     public Set<EntityType> getHosts() { return hosts; }
     public Set<EntityType> getVectors() { return vectors; }
+
     public int getImmunityChance() { return immunityChance; }
 
     public List<Integer> getIncubation() { return incubation; }
@@ -75,19 +77,31 @@ public class Disease {
 
     // Methods
     public boolean infect(Player player) {
+        // Get the player's data
         YamlConfiguration data = UsersData.getOrCreate(player);
+
         if (!data.contains("diseases")){
             data.set("diseases", null);
         }
 
+        // Get the diseases's data
         ConfigurationSection diseases = data.getConfigurationSection("diseases");
+        if (diseases == null){
+            diseases = data.createSection("diseases");
+        }
+
         if (!diseases.contains(this.name)){
             diseases.set(this.name, null);
         } else {
+            player.sendMessage("You are already infected with " + this.name + " !");
             return false;
         }
 
+        // Get the this disease's data
         ConfigurationSection disease = diseases.getConfigurationSection(this.name);
+        if (disease == null){
+            disease = diseases.createSection(this.name);
+        }
 
         if(!disease.contains("immunity"))
         {
@@ -96,19 +110,38 @@ public class Disease {
 
         if(!disease.getBoolean("immunity"))
         {
-            disease.set("incubation", new Random().nextInt(incubation.get(0), incubation.get(1)) * 60 * 20);
-            disease.set("duration", new Random().nextInt(duration.get(0), duration.get(1)) * 60 * 20);    
+            disease.set("incubation", new Random().nextInt(incubation.get(0), incubation.get(1) + 1) * 60 * 20);
+            disease.set("duration", new Random().nextInt(duration.get(0), duration.get(1) + 1) * 60 * 20);    
             disease.set("startplaytime", player.getStatistic(Statistic.PLAY_ONE_MINUTE));
-
-            for(DiseaseEffect effect : effects){
-                effect.apply(player);
-            }
         }
 
         diseases.set(this.name, disease);
         data.set("diseases", diseases);
 
+        try {
+            UsersData.save(player, data);
+        } catch (IOException e) {}
+    
+        player.sendMessage("You are infected with " + this.name + " enjoy bouffon !");
+
         return true;
+    }
+    public void apply(Player player) { for (DiseaseEffect effect : effects) effect.apply(player); }
+
+    public boolean isInfected(Player player) {
+        YamlConfiguration data = UsersData.getOrCreate(player);
+        if (data.contains("diseases")){
+            ConfigurationSection diseases = data.getConfigurationSection("diseases");
+
+            if (diseases.contains(this.name)){
+                ConfigurationSection disease = diseases.getConfigurationSection(this.name);
+                
+                if(disease.getBoolean("immunity")) return false;
+                else return true;
+            }
+        }
+
+        return false;
     }
 
     public void cure(Player player) {
@@ -120,7 +153,12 @@ public class Disease {
             if (!diseases.contains(this.name)){
                 diseases.set(this.name, null);
                 data.set("diseases", diseases);
+
+                try {
+                    UsersData.save(player, data);
+                } catch (IOException e) {}
             }
         }
     }
+    public void unApply(Player player) { for (DiseaseEffect effect : effects) effect.remove(player); }
 }

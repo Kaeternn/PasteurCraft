@@ -13,27 +13,29 @@ public class InfectCmd implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] args) {
-        if (args.length < 2) {
-            sender.sendMessage("Usage: /infect <name_of_the_disease> <player>");
-            return false; }
+        if (args.length < 2) { // Check if there are enough arguments
+            return false; 
+        }
         
         Disease disease = null;
-        Player player = Bukkit.getOfflinePlayer(args[1]).getPlayer();
-
-        for(Disease dis : PasteurCraft.diseases){
-            if(dis.getName().replace('_', ' ').equalsIgnoreCase(args[0])){ disease = dis; }
+        for(Disease diseaseByName : PasteurCraft.diseases){ // Try to match the disease name with the disease argument
+            if(diseaseByName.getName().equals(args[0].replace('_', ' '))){
+                disease = diseaseByName;
+            }
         }
 
-        if(disease == null){
+        if(disease == null){ // Verify that the disease was found
             sender.sendMessage("Disease not found.");
-            return false; }
+            return false; 
+        }
 
-        if(player == null){
+        Player player = Bukkit.getOfflinePlayer(args[1]).getPlayer();
+        if(player == null){ // Verify that the player was found
             sender.sendMessage("Player not found.");
-            return false; }
+            return false; 
+        }
 
         disease.infect(player);
-        
-        return false;
+        return true;
     }
 }

@@ -17,7 +17,7 @@ public class PlayerEatEvent implements Listener {
 
     public PlayerEatEvent(PasteurCraft PLUGIN) { this.PLUGIN = PLUGIN; }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.NORMAL)
     private void onPlayerEatEvent(PlayerItemConsumeEvent event){
         for(Disease disease : PLUGIN.getDiseases()){
             for(AbstractTransmission transmission : disease.getTransmissions()){
