@@ -77,8 +77,8 @@ public class PasteurCraft extends JavaPlugin{
         ConfigurationSection diseaseConfiguration = configuration.getConfigurationSection("diseases");
         int i = 0;
         
-        if(diseaseConfiguration.getKeys(false).isEmpty()){ // Verify if there is configured diseases
-            getLogger().info("There is no disease in the configuration file, please note that the plugin won't do anything without one."); }
+        // Verify if there is any configured diseases
+        if(diseaseConfiguration.getKeys(false).isEmpty()) getLogger().info("There is no disease in the configuration file, please note that the plugin won't do anything without one.");
 
         getLogger().info("Loading " + diseaseConfiguration.getKeys(false).size() + " diseases ...");
 
@@ -87,29 +87,40 @@ public class PasteurCraft extends JavaPlugin{
 
             if(disease.getString("name") == null){ // Verify if the disease have a name
                 getLogger().info("The disease number " + i+1 + " isn't named in the configuration, the disease was ignored by the plugin.");
-                continue; }
+                continue; 
+            }
+            
+            for(Disease savedDisease : this.diseases){
+                if(savedDisease.getName().equals(disease.getString("name"))){ // Verify if a disease exist with the same name
+                    getLogger().info("There is more than one " + disease.getString("name") + " only the first one will be loaded.");
+                    continue;
+                }
+            }
 
             Set<EntityType> hosts = loadEntities(disease, "hosts", disease.getString("name"));
             Set<EntityType> vectors = loadEntities(disease, "vectors", disease.getString("name"));
 
             int immunityChance = 0;
             if(!(disease.getString("immunity_chance") == null)){ // Set immunity_chance value if configured
-                immunityChance = disease.getInt("immunity_chance"); }
+                immunityChance = disease.getInt("immunity_chance");
+            }
                 
             List<Integer> incubation = loadDuration(disease.getConfigurationSection("incubation_duration"), "incubation_duration", disease.getString("name"));
             List<Integer> infection = loadDuration(disease.getConfigurationSection("infection_duration"), "infection_duration", disease.getString("name"));
-            if(incubation.isEmpty() || infection.isEmpty()){ continue; } // Verify if the disease's incubation and infection have min and max values configured
+            if(incubation.isEmpty() || infection.isEmpty()) continue;  // Verify if the disease's incubation and infection have min and max values configured
             
             List<DiseaseEffect> effects = new ArrayList<>();
             if(disease.getList("effects") == null){ // Verify is the disease have any effect configured
                 getLogger().info(disease.getString("name") + " don't have any effect, the disease was ignored by the plugin.");
-                continue; }
-            else{
+                continue; 
+            } else {
                 for(Object effect : disease.getList("effects")){ // Loop on all disease's effects
                     String effectName = effect.toString().split("\\s")[0];
                     int effectLevel = Integer.parseInt(effect.toString().split("\\s")[1]);
                     
-                    effects.add(new DiseaseEffect(effectName, effectLevel)); } }
+                    effects.add(new DiseaseEffect(effectName, effectLevel));
+                }
+            }
             
             // Create the disease's instance
             Disease diseaseToAdd = new Disease(disease.getString("name"), hosts, vectors, immunityChance, incubation, infection, effects);
@@ -117,19 +128,23 @@ public class PasteurCraft extends JavaPlugin{
 
             if(transmissionSection.getConfigurationSection("air_transmission") != null){ // Verify if the disease have a air transmission
                 AirTransmission air = (AirTransmission) loadTransmission(transmissionSection.getConfigurationSection("air_transmission"), "air_transmission", disease.getString("name"));
-                diseaseToAdd.setAir(air); }
+                diseaseToAdd.setAir(air);
+            }
 
             if(transmissionSection.getConfigurationSection("biome_transmission") != null){ // Verify if the disease have a biome transmission
                 BiomeTransmission biome = (BiomeTransmission) loadTransmission(transmissionSection.getConfigurationSection("biome_transmission"), "biome_transmission", disease.getString("name"));
-                diseaseToAdd.setBiome(biome); }
+                diseaseToAdd.setBiome(biome);
+            }
 
             if(transmissionSection.getConfigurationSection("consume_transmission") != null){ // Verify if the disease have a consume transmission
                 ConsumeTransmission consume = (ConsumeTransmission) loadTransmission(transmissionSection.getConfigurationSection("consume_transmission"), "consume_transmission", disease.getString("name"));
-                diseaseToAdd.setConsume(consume); }
+                diseaseToAdd.setConsume(consume);
+            }
 
             if(transmissionSection.getConfigurationSection("physical_transmission") != null){ // Verify if the disease have a physical transmission
                 PhysicalTransmission physical = (PhysicalTransmission) loadTransmission(transmissionSection.getConfigurationSection("physical_transmission"), "physical_transmission", disease.getString("name"));
-                diseaseToAdd.setPhysical(physical); }
+                diseaseToAdd.setPhysical(physical);
+            }
 
             diseases.add(diseaseToAdd);
             i++; 
@@ -140,12 +155,13 @@ public class PasteurCraft extends JavaPlugin{
 
     private List<Integer> loadDuration(ConfigurationSection section, String type, String disease){
         List<Integer> duration = new ArrayList<>();
-        
-        if(section.getString("min") == null || section.getString("max") == null){ // Verify if the disease's incubation have min and max values configured
-            getLogger().info(disease + "'s " + type + " duration setting seems to be incomplete, the disease was ignored by the plugin."); }
-        else{
+
+        // Verify if the disease's incubation have min and max values configured
+        if(section.getString("min") == null || section.getString("max") == null) getLogger().info(disease + "'s " + type + " duration setting seems to be incomplete, the disease was ignored by the plugin.");
+        else {
             duration.add(section.getInt("min"));
-            duration.add(section.getInt("max")); }
+            duration.add(section.getInt("max"));
+        }
 
         return duration;
     }
@@ -155,9 +171,10 @@ public class PasteurCraft extends JavaPlugin{
 
         for(Object entity : section.getList(type)){ // Loop on all entities of designated section
             try{ // Try to match the entity with a Minecraft one
-                entities.add(EntityType.valueOf(entity.toString().toUpperCase())); }
-            catch(Exception e){
-                getLogger().info(entity.toString() + " in " + disease + "'s " + type + " list isn't a valid entity so it was ignored by the plugin."); }
+                entities.add(EntityType.valueOf(entity.toString().toUpperCase()));
+            } catch(Exception e) {
+                getLogger().info(entity.toString() + " in " + disease + "'s " + type + " list isn't a valid entity so it was ignored by the plugin.");
+            }
         }
 
         return entities;
