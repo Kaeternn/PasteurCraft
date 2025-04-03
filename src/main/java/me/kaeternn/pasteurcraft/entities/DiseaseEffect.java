@@ -12,7 +12,7 @@ public class DiseaseEffect {
     // Constructor
     public DiseaseEffect(String name, int level){
         this.name = name;
-        this.level = level;
+        this.level = level - 1;
     }
 
     // Assessors
