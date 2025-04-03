@@ -1,14 +1,12 @@
 package me.kaeternn.pasteurcraft;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.bukkit.entity.EntityType;
-import org.bukkit.event.Listener;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
@@ -26,7 +24,7 @@ import me.kaeternn.pasteurcraft.entities.transmission.PhysicalTransmission;
 import me.kaeternn.pasteurcraft.listeners.DisEntityDeathEvent;
 import me.kaeternn.pasteurcraft.listeners.consume.PlayerEatEvent;
 import me.kaeternn.pasteurcraft.listeners.physical.EntityAttackEvent;
-import me.kaeternn.pasteurcraft.tasks.DiseaseCheckTask;
+import me.kaeternn.pasteurcraft.tasks.PasteurCraftTask;
 
 public class PasteurCraft extends JavaPlugin{
     public static PasteurCraft plugin;
@@ -70,7 +68,7 @@ public class PasteurCraft extends JavaPlugin{
         getServer().getPluginManager().registerEvents(new EntityAttackEvent(plugin), plugin);
         getServer().getPluginManager().registerEvents(new DisEntityDeathEvent(plugin), plugin);
 
-        new DiseaseCheckTask(plugin).runTaskTimer(plugin, 0, 1200);
+        new PasteurCraftTask(plugin).runTaskTimer(plugin, 0, 1200);
     }
 
     public List<Disease> getDiseases() { return diseases; }

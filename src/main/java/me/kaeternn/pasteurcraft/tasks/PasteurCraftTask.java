@@ -12,10 +12,10 @@ import me.kaeternn.pasteurcraft.PasteurCraft;
 import me.kaeternn.pasteurcraft.UsersData;
 import me.kaeternn.pasteurcraft.entities.Disease;
 
-public class DiseaseCheckTask extends BukkitRunnable {
+public class PasteurCraftTask extends BukkitRunnable {
     private final JavaPlugin plugin;
 
-    public DiseaseCheckTask(JavaPlugin plugin) { this.plugin = plugin; }
+    public PasteurCraftTask(JavaPlugin plugin) { this.plugin = plugin; }
 
     @Override
     public void run() {
@@ -32,7 +32,7 @@ public class DiseaseCheckTask extends BukkitRunnable {
                             if (player.getStatistic(Statistic.PLAY_ONE_MINUTE) > diseaseData.getInt("startplaytime") + diseaseData.getInt("incubation") + diseaseData.getInt("duration")){
                                 disease.cure(player);
                                 disease.unApply(player);
-                                player.sendMessage(disease.getName() + " est finie.");
+                                player.sendMessage("[PasteurCraft] Vous ne ressentez plus les effets de " + disease.getName() + ".");
                             }
                             else if (player.getStatistic(Statistic.PLAY_ONE_MINUTE) > diseaseData.getInt("startplaytime") + diseaseData.getInt("incubation")){
                                 disease.apply(player);

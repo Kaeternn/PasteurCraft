@@ -150,8 +150,10 @@ public class Disease {
         if (data.contains("diseases")){
             ConfigurationSection diseases = data.getConfigurationSection("diseases");
 
-            if (!diseases.contains(this.name)){
-                diseases.set(this.name, null);
+            if (diseases.contains(this.name)){
+                ConfigurationSection disease = null;
+                if (diseases.getConfigurationSection(this.name).getBoolean("immunity")) disease.set("immunity", true);
+                diseases.set(this.name, disease);
                 data.set("diseases", diseases);
 
                 try {
