@@ -92,7 +92,7 @@ public class PasteurCraft extends JavaPlugin{
             
             for(Disease savedDisease : this.diseases){
                 if(savedDisease.getName().equals(disease.getString("name"))){ // Verify if a disease exist with the same name
-                    getLogger().info("There is more than one " + disease.getString("name") + " only the first one will be loaded.");
+                    getLogger().info("There is more than one " + disease.getString("name") + " only the first one will be loaded. (disease number " + i+1 + ")");
                     continue;
                 }
             }
