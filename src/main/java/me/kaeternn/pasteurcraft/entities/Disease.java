@@ -113,6 +113,7 @@ public class Disease {
             disease.set("incubation", new Random().nextInt(incubation.get(0), incubation.get(1) + 1) * 60 * 20);
             disease.set("duration", new Random().nextInt(duration.get(0), duration.get(1) + 1) * 60 * 20);    
             disease.set("startplaytime", player.getStatistic(Statistic.PLAY_ONE_MINUTE));
+            disease.set("messagesent", false);
         }
 
         diseases.set(this.name, disease);
