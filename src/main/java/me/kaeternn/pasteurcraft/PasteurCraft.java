@@ -32,6 +32,7 @@ public class PasteurCraft extends JavaPlugin{
     public static boolean debug;
     public static String lang;
 
+    @SuppressWarnings("static-access")
     @Override
     public void onEnable(){
         saveDefaultConfig();
