@@ -122,7 +122,8 @@ public class Disease {
         try {
             UsersData.save(player, data);
         } catch (IOException e) {}
-    
+        
+        // DEBUG
         player.sendMessage("You are infected with " + this.name + " enjoy bouffon !");
 
         return true;

@@ -1,0 +1,32 @@
+# Placeholders :
+#   - %version% = Plugin's version
+#   - %nbdisease% = Number of loaded diseases
+#   - %diseaseid% = Number of the disease (can only be used in Disease subsections)
+#   - %object% = Name of an object (entity, biome and item) (can only be used in Object subsections)
+#   - %error% = Java's error message (can only be used in Error messages section)
+#   - %disease% = Disease's name (can be used in Player messages section and Disease/Object subsections too except for no_name one)
+
+version: "1.0"
+
+# Info messages
+info_no_disease: "There is no disease in the configuration file, please note that the plugin won't do anything without one."
+info_loaded_diseases: "Loaded %nbdisease% disease(s) ..."
+#   Disease
+info_disease_no_name : "The disease number %diseaseid% isn't named in the configuration, the disease was ignored by the plugin."
+info_disease_same_name : "The disease %disease% number %diseaseid% have the same than another one, the disease was ingored by the plugin."
+info_disease_no_effect : "%disease% don't have any effect, the disease was ignored by the plugin."
+info_disease_no_duration : "%disease%'s specified duration setting seems to be incomplete, the disease was ignored by the plugin."
+#   Object
+info_object_mismatch_air : "%object% in %disease%'s air_transmission entity list isn't a valid entity so it was ignored by the plugin."
+info_object_mismatch_biome : "%object% in %disease%'s biome_transmission biome list isn't a valid biome so it was ignored by the plugin."
+info_object_mismatch_consume : "%object% in %disease%'s consume_transmission item list isn't a valid item so it was ignored by the plugin."
+info_object_mismatch_physical : "%object% in %disease%'s physical_transmission entity list isn't a valid entity so it was ignored by the plugin."
+info_object_mismatch_entity : "%object% in %disease%'s specified entity list isn't a valid entity so it was ignored by the plugin."
+
+# Error messages
+error_debug_config: "Failed to get debug state from the configuration, it was set to false by default : %error%"
+error_diseases_config: "There was a major error while loading the disease configuration : %error%"
+
+# Player messages
+notify_disease_effect_start: "[PasteurCraft] You start to feel the effects of %disease%."
+notify_disease_effect_stop: "[PasteurCraft] You no longer feel the effects of %disease%."

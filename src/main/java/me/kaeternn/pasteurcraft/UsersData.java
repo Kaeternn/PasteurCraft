@@ -2,6 +2,7 @@ package me.kaeternn.pasteurcraft;
 
 import java.io.File;
 import java.io.IOException;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +29,9 @@ public class UsersData {
      * @return
      */
     public static Optional<YamlConfiguration> get(OfflinePlayer user) {
+        if (usersData.containsKey(user.getUniqueId()))
+            return Optional.of(usersData.get(user.getUniqueId()));
+
         List<String> usersUUIDs = List.of(dataFolder.listFiles((dir, name) -> name.toLowerCase().endsWith(".yml")))
                 .stream().map(file -> file.getName().split("\\.")[0]).collect(Collectors.toList());
 
@@ -36,6 +40,7 @@ public class UsersData {
 
         File userFile = new File(dataFolder, user.getUniqueId() + ".yml");
         YamlConfiguration data = YamlConfiguration.loadConfiguration(userFile);
+        usersData.put(user.getUniqueId(), data);
 
         return Optional.of(data);
     }

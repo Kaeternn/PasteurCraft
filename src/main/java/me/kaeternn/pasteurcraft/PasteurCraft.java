@@ -1,5 +1,6 @@
 package me.kaeternn.pasteurcraft;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -11,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.kaeternn.pasteurcraft.commands.CureCmd;
@@ -30,7 +32,7 @@ public class PasteurCraft extends JavaPlugin{
     public static PasteurCraft plugin;
     public static List<Disease> diseases = new ArrayList<>();
     public static boolean debug;
-    public static String lang;
+    private static YamlConfiguration lang;
 
     @SuppressWarnings("static-access")
     @Override
@@ -40,36 +42,37 @@ public class PasteurCraft extends JavaPlugin{
         FileConfiguration configuration = PasteurCraft.plugin.getConfig();
         UsersData.init();
 
+        try{ // Try to get language from configuration
+            lang = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "lang/" + configuration.getString("language") + ".yml"));
+        } catch(Exception e) {
+            getLogger().info("Failed to get language from the configuration, it was set to en by default.");
+            configuration.addDefault("language", "en");
+            lang = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "lang/en.yml"));
+        }
+
         try{ // Try to get debug state from configuration
             debug = configuration.getBoolean("debug");
-        }catch(Exception e){
-            getLogger().info("Failed to get debug state from the configuration, it was set to false by default."); 
+        } catch(Exception e) {
+            getLogger().warning(plugin.getMSG("error_debug_config").replace("%error%", e.getMessage()));
             configuration.addDefault("debug", false);
             debug = false; 
         }
 
-        try{ // Try to get language from configuration
-            lang = configuration.getString("language");
-        }catch(Exception e){
-            getLogger().info("Failed to get language from the configuration, it was set to en by default.");
-            configuration.addDefault("language", "en");
-            lang = "en"; 
-        }
-
         try{ // Try to get the diseases from configuration
             plugin.diseases = loadDiseases(configuration);
-        }catch(Exception e){
-            getLogger().info("There was a major error while loading the diseases configuration : " + e); 
+        } catch(Exception e) {
+            getLogger().warning(plugin.getMSG("error_diseases_config").replace("%error%", e.getMessage()));
         }
 
         getCommand("infect").setExecutor(new InfectCmd());
         getCommand("cure").setExecutor(new CureCmd());
+        // TODO : Ajout des commandes DiseaseList et Reload
 
         getServer().getPluginManager().registerEvents(new PlayerEatEvent(plugin), plugin);
         getServer().getPluginManager().registerEvents(new EntityAttackEvent(plugin), plugin);
         getServer().getPluginManager().registerEvents(new DisEntityDeathEvent(plugin), plugin);
 
-        new PasteurCraftTask(plugin).runTaskTimer(plugin, 0, 1200);
+        new PasteurCraftTask(plugin).runTaskTimer(plugin, 0, 20);
     }
 
     public List<Disease> getDiseases() { return diseases; }
@@ -77,26 +80,29 @@ public class PasteurCraft extends JavaPlugin{
     private List<Disease> loadDiseases(FileConfiguration configuration){
         ConfigurationSection diseaseConfiguration = configuration.getConfigurationSection("diseases");
         int i = 0;
+        boolean stop = false;
         
         // Verify if there is any configured diseases
-        if(diseaseConfiguration.getKeys(false).isEmpty()) getLogger().info("There is no disease in the configuration file, please note that the plugin won't do anything without one.");
-
-        getLogger().info("Loading " + diseaseConfiguration.getKeys(false).size() + " diseases ...");
+        if(diseaseConfiguration.getKeys(false).isEmpty()) getLogger().info(getMSG("info_no_disease"));
 
         for(String key : diseaseConfiguration.getKeys(false)){ // Loop on all configured diseases
             ConfigurationSection disease = diseaseConfiguration.getConfigurationSection(key);
 
+            //TODO : Continuer la migration des messages.
+
             if(disease.getString("name") == null){ // Verify if the disease have a name
-                getLogger().info("The disease number " + i+1 + " isn't named in the configuration, the disease was ignored by the plugin.");
+                getLogger().info(getMSG("info_disease_no_name"));
                 continue; 
             }
             
             for(Disease savedDisease : this.diseases){
-                if(savedDisease.getName().equals(disease.getString("name"))){ // Verify if a disease exist with the same name
-                    getLogger().info("There is more than one " + disease.getString("name") + " only the first one will be loaded. (disease number " + i+1 + ")");
-                    continue;
+                if(disease.getString("name").equals(savedDisease.getName())){ // Verify if a disease exist with the same name
+                    getLogger().info(getMSG("info_disease_same_name").replace("%disease%", disease.getString("name")).replace("%diseaseid%", "" + (i+1)));
+                    stop = true;
                 }
             }
+
+            if(stop) continue;
 
             Set<EntityType> hosts = loadEntities(disease, "hosts", disease.getString("name"));
             Set<EntityType> vectors = loadEntities(disease, "vectors", disease.getString("name"));
@@ -112,7 +118,7 @@ public class PasteurCraft extends JavaPlugin{
             
             List<DiseaseEffect> effects = new ArrayList<>();
             if(disease.getList("effects") == null){ // Verify is the disease have any effect configured
-                getLogger().info(disease.getString("name") + " don't have any effect, the disease was ignored by the plugin.");
+                getLogger().info(getMSG("info_disease_no_effect").replace("%disease%", disease.getString("name")).replace("%diseaseid%", "" + (i+1)));
                 continue; 
             } else {
                 for(Object effect : disease.getList("effects")){ // Loop on all disease's effects
@@ -151,6 +157,8 @@ public class PasteurCraft extends JavaPlugin{
             i++; 
         }
 
+        getLogger().info(getMSG("info_loaded_diseases").replace("%nbdisease%","" + diseases.size()));
+
         return diseases;
     }
 
@@ -158,7 +166,7 @@ public class PasteurCraft extends JavaPlugin{
         List<Integer> duration = new ArrayList<>();
 
         // Verify if the disease's incubation have min and max values configured
-        if(section.getString("min") == null || section.getString("max") == null) getLogger().info(disease + "'s " + type + " duration setting seems to be incomplete, the disease was ignored by the plugin.");
+        if(section.getString("min") == null || section.getString("max") == null) getLogger().info(type + " : " + getMSG("info_disease_no_duration").replace("%disease%", disease));
         else {
             duration.add(section.getInt("min"));
             duration.add(section.getInt("max"));
@@ -174,7 +182,7 @@ public class PasteurCraft extends JavaPlugin{
             try{ // Try to match the entity with a Minecraft one
                 entities.add(EntityType.valueOf(entity.toString().toUpperCase()));
             } catch(Exception e) {
-                getLogger().info(entity.toString() + " in " + disease + "'s " + type + " list isn't a valid entity so it was ignored by the plugin.");
+                getLogger().info(type + " : " + getMSG("info_object_mismatch_entity").replace("%object%", entity.toString()).replace("%disease%", disease));
             }
         }
 
@@ -189,25 +197,25 @@ public class PasteurCraft extends JavaPlugin{
                 try {
                     objects.add(EntityType.valueOf(object.toString().toUpperCase()));
                 } catch (Exception e) {
-                    getLogger().info(object.toString() + " in " + disease + "'s air_transmission entity list isn't a valid entity so it was ignored by the plugin.");
+                    getLogger().info(getMSG("info_object_mismatch_air").replace("%object%", object.toString()).replace("%disease%", disease));
                 }
             } else if (type.equals("biome_transmission")) {
                 try {
                     objects.add(Biome.valueOf(object.toString().toUpperCase()));
                 } catch (Exception e) {
-                    getLogger().info(object.toString() + " in " + disease + "'s biome_transmission biome list isn't a valid biome so it was ignored by the plugin.");
+                    getLogger().info(getMSG("info_object_mismatch_biome").replace("%object%", object.toString()).replace("%disease%", disease));
                 }
             } else if (type.equals("consume_transmission")) {
                 try {
                     objects.add(Material.valueOf(object.toString().toUpperCase()));
                 } catch (Exception e) {
-                    getLogger().info(object.toString() + " in " + disease + "'s consume_transmission item list isn't a valid item so it was ignored by the plugin.");
+                    getLogger().info(getMSG("info_object_mismatch_consume").replace("%object%", object.toString()).replace("%disease%", disease));
                 }
             } else if (type.equals("physical_transmission")) {
                 try {
                     objects.add(EntityType.valueOf(object.toString().toUpperCase()));
                 } catch (Exception e) {
-                    getLogger().info(object.toString() + " in " + disease + "'s physical_transmission entity list isn't a valid entity so it was ignored by the plugin.");
+                    getLogger().info(getMSG("info_object_mismatch_physical").replace("%object%", object.toString()).replace("%disease%", disease));
                 }
             }
         }
@@ -223,5 +231,11 @@ public class PasteurCraft extends JavaPlugin{
         }
 
         return null;
+    }
+
+    public String getMSG(String msgID){
+        return lang.getString(msgID)
+            .replace("%version%", plugin.getPluginMeta().getVersion()
+            .replace("%nbdisease%", ((Integer) plugin.diseases.size()).toString()));
     }
 }

@@ -1,0 +1,32 @@
+# Placeholders :
+#   - %version% = Version du plugin
+#   - %nbdisease% = Nombre de maladie(s) chargée(s)
+#   - %diseaseid% = Numéro de la maladie (peut être utilisé dans la sous-section "Disease")
+#   - %object% = Nom d'un objet (entité, biome et item) (peut être utilisé dans la sous-section "Object")
+#   - %error% = Message d'erreur de Java (peut être utilisé dans la section "Error messages")
+#   - %disease% = Nom de la maladie (peut être utilisé dans la section "Player messages" et les sous-sections "Disease" et "Object" sauf pour no_name)
+
+version: "1.0"
+
+# Info messages
+info_no_disease: "Il n'y a aucune maladie configurée, merci de noter que le plugin ne fera rien sans maladie."
+info_loaded_diseases: "%nbdisease% maladie(s) chargée(s) ..."
+#   Disease
+info_disease_no_name : "La maladie numéro %diseaseid% n'est pas nommée dans la configuration, la maladie est ignorée par le plugin."
+info_disease_same_name : "La maladie numéro %diseaseid% est nommée de la même façon qu'une autre maladie, la maladie est ignorée par le plugin."
+info_disease_no_effect : "%disease% n'as aucun effet, la maladie est ignorée par le plugin."
+info_disease_no_duration : "La configuration de durée spécifiée de %disease% semble incomplète, la maladie est ignorée par le plugin."
+#   Object
+info_object_mismatch_air : "%object% de la liste d'entités d'air_transmission de %disease% n'est pas une entité valide, et est donc ignorée par le plugin."
+info_object_mismatch_biome : "%object% de la liste de biomes de biome_transmission de %disease% n'est pas un biome valide, et est donc ignoré par le plugin."
+info_object_mismatch_consume : "%object% de la liste d'items de consume_transmission de %disease% n'est pas un item valide, et est donc ignoré par le plugin."
+info_object_mismatch_physical : "%object% de la liste d'entités d'physical_transmission de %disease% n'est pas une entité valide, et est donc ignorée par le plugin."
+info_object_mismatch_entity : "%object% de la liste d'entités spécifiée de %disease% n'est pas une entité valide, et est donc ignorée par le plugin."
+
+# Error messages
+error_debug_config: "Échec de la récupération du paramètre de debug dans la configuration, il a été désactivé par défaut : %error%"
+error_diseases_config: "Il y a eu une erreur massive lors du chargement de la configuration des maladies : %error%"
+
+# Player messages
+notify_disease_effect_start: "[PasteurCraft] Vous commencez à ressentir les effets de %disease%."
+notify_disease_effect_stop: "[PasteurCraft] Vous ne ressentez plus les effets de %disease%."
