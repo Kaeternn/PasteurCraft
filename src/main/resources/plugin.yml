@@ -19,7 +19,7 @@ commands:
         permission: pasteurcraft.cure
         permission-message: You do not have <permission>
     diseaselist:
-        aliases: [dl]
+        aliases: [dl, dlist]
         usage: /diseaselist 
         description: Give all existing diseases
         permission: pasteurcraft.diseaselist

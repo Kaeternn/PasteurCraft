@@ -4,11 +4,20 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-public class DiseaseListCmd implements CommandExecutor  {
+import me.kaeternn.pasteurcraft.PasteurCraft;
+import me.kaeternn.pasteurcraft.entities.Disease;
 
+public class DiseaseListCmd implements CommandExecutor  {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] args) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onCommand'");
+        try{
+        sender.sendMessage(PasteurCraft.plugin.getMSG("cmd_diseaselist_header"));
+        } catch (NullPointerException e) {
+            sender.sendMessage(e.getMessage());
+            return false;
+        }
+        for (Disease disease : PasteurCraft.diseases) sender.sendMessage("    - " + disease.getName());
+
+        return true;
     }
 }

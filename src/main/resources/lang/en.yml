@@ -30,3 +30,8 @@ error_diseases_config: "There was a major error while loading the disease config
 # Player messages
 notify_disease_effect_start: "[PasteurCraft] You start to feel the effects of %disease%."
 notify_disease_effect_stop: "[PasteurCraft] You no longer feel the effects of %disease%."
+
+# Command messages
+cmd_infect_cure_mismatch_disease : "[PasteurCraft] Disease not found."
+cmd_infect_cure_mismatch_player : "[PasteurCraft] Player not found."
+cmd_diseaselist_header : "[PasteurCraft] List of all diseases :"

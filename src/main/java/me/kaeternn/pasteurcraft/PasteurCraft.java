@@ -16,7 +16,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.kaeternn.pasteurcraft.commands.CureCmd;
+import me.kaeternn.pasteurcraft.commands.DiseaseListCmd;
 import me.kaeternn.pasteurcraft.commands.InfectCmd;
+import me.kaeternn.pasteurcraft.commands.ReloadCmd;
 import me.kaeternn.pasteurcraft.entities.Disease;
 import me.kaeternn.pasteurcraft.entities.DiseaseEffect;
 import me.kaeternn.pasteurcraft.entities.transmission.AirTransmission;
@@ -66,7 +68,8 @@ public class PasteurCraft extends JavaPlugin{
 
         getCommand("infect").setExecutor(new InfectCmd());
         getCommand("cure").setExecutor(new CureCmd());
-        // TODO : Ajout des commandes DiseaseList et Reload
+        getCommand("diseaselist").setExecutor(new DiseaseListCmd());
+        //getCommand("reload").setExecutor(new ReloadCmd());
 
         getServer().getPluginManager().registerEvents(new PlayerEatEvent(plugin), plugin);
         getServer().getPluginManager().registerEvents(new EntityAttackEvent(plugin), plugin);
@@ -87,8 +90,6 @@ public class PasteurCraft extends JavaPlugin{
 
         for(String key : diseaseConfiguration.getKeys(false)){ // Loop on all configured diseases
             ConfigurationSection disease = diseaseConfiguration.getConfigurationSection(key);
-
-            //TODO : Continuer la migration des messages.
 
             if(disease.getString("name") == null){ // Verify if the disease have a name
                 getLogger().info(getMSG("info_disease_no_name"));
@@ -111,7 +112,7 @@ public class PasteurCraft extends JavaPlugin{
             if(!(disease.getString("immunity_chance") == null)){ // Set immunity_chance value if configured
                 immunityChance = disease.getInt("immunity_chance");
             }
-                
+            
             List<Integer> incubation = loadDuration(disease.getConfigurationSection("incubation_duration"), "incubation_duration", disease.getString("name"));
             List<Integer> infection = loadDuration(disease.getConfigurationSection("infection_duration"), "infection_duration", disease.getString("name"));
             if(incubation.isEmpty() || infection.isEmpty()) continue;  // Verify if the disease's incubation and infection have min and max values configured

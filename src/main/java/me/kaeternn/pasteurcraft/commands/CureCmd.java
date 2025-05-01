@@ -25,13 +25,13 @@ public class CureCmd implements CommandExecutor  {
         }
 
         if(disease == null){ // Verify that the disease was found
-            sender.sendMessage("Disease not found.");
+            sender.sendMessage(PasteurCraft.plugin.getMSG("cmd_infect_cure_mismatch_disease"));
             return false; 
         }
 
         Player player = Bukkit.getOfflinePlayer(args[1]).getPlayer();
         if(player == null){ // Verify that the player was found
-            sender.sendMessage("Player not found.");
+            sender.sendMessage(PasteurCraft.plugin.getMSG("cmd_infect_cure_mismatch_player"));
             return false; 
         }
 

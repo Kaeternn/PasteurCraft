@@ -30,3 +30,8 @@ error_diseases_config: "Il y a eu une erreur massive lors du chargement de la co
 # Player messages
 notify_disease_effect_start: "[PasteurCraft] Vous commencez à ressentir les effets de %disease%."
 notify_disease_effect_stop: "[PasteurCraft] Vous ne ressentez plus les effets de %disease%."
+
+# Command messages
+cmd_infect_cure_mismatch_disease : "[PasteurCraft] Maladie inconnue."
+cmd_infect_cure_mismatch_player : "[PasteurCraft] Joueur/Joueuse inconnu(e)."
+cmd_disease_list_header : "[PasteurCraft] Liste des maladies :"
